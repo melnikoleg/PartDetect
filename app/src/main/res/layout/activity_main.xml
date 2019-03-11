@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+    <ListView
+        android:id="@+id/part_list"
+        style="@style/Widget.AppCompat.ListView"
+
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+
+        android:visibility="visible" />
+
+    <com.wonderkiln.camerakit.CameraView
+        android:id="@+id/cameraView"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center_vertical">
+
+    </com.wonderkiln.camerakit.CameraView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <Space
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
+
+        <ImageButton
+            android:id="@+id/btnDetectObject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shutter" />
+
+    </LinearLayout>
+
+    </LinearLayout>

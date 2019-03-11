@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">PartDetect</string>
+    <string name="toggle_camera">Toggle Camera</string>
+    <string name="detect_object">Detect Object</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="ip_adress_of_base">ip address of base</string>
+
+    <string-array name="ipList">
+        <item>192.168.1.229</item>
+        <item>192.168.1.242</item>
+        <item>[192.168.1.37]</item>
+        <item>127.0.0.1</item>
+
+
+    </string-array>
+</resources>
