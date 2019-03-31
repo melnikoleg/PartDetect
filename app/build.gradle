@@ -19,7 +19,7 @@ android {
 
     aaptOptions {
         noCompress "tflite"
-        noCompress "lite"
+
     }
 }
 
@@ -30,7 +30,8 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.wonderkiln:camerakit:0.13.1'
-    implementation 'org.tensorflow:tensorflow-lite:+'
+    //implementation 'org.tensorflow:tensorflow-lite:+'
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

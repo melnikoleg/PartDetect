@@ -16,8 +16,6 @@ import org.json.JSONObject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.wonderkiln.camerakit.CameraKitError;
@@ -44,7 +42,8 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String MODEL_PATH = "quantized_model.tflite";
+    private static final String MODEL_PATH = "quantized_model_MIRO_M2_89.tflite";
+    //private static final String MODEL_PATH = "quantized_model.tflite";
     private static final int INPUT_SIZE = 224;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -52,12 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
     private ImageButton btnDetectObject;
-    private ImageView imageViewResult;
     private CameraView cameraView;
     private ListView listView;
     private CustomAdapter pAdapter;
     private ArrayList<Parts> partsList;
-
+    private float[][] summVec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,55 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 final float[][] result = classifier.recognizeImage(bitmap);
 
-                partsList = new ArrayList<>();
-                JSONArray jsonArray = new JSONArray(Arrays.asList(result));
-
-                client = new OkHttpClient();
-
-                String url = "http://192.168.1.4:5000/recognise_image";
-
-                listView = (ListView) findViewById(R.id.part_list);
-                // создаем адаптер
-                pAdapter = new CustomAdapter(MainActivity.this, partsList);
-                listView.setAdapter(pAdapter);
-                pAdapter.notifyDataSetChanged();
-                String respond;
-                try {
-                    respond = post(url, jsonArray.toString());
-                    String jsonData = respond;
-                    JSONObject Jobject = new JSONObject(jsonData);
-                    JSONArray Jarray = Jobject.getJSONArray("predict_result");
-
-                    for (int i = 0; i < Jarray.length(); i++) {
-
-                        JSONObject data = new JSONObject(Jarray.getJSONObject(i).toString());
-                        JSONObject JoImg = new JSONObject(data.get("draw_img_preview").toString());
-                        byte[] decodedBytes = Base64.decode(JoImg.get("$binary").toString(), Base64.DEFAULT);
-                        Bitmap drawImgPreview = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-                        JSONObject drawId = new JSONObject();
-                        drawId.put("id", data.get("draw_img_id"));
-                        partsList.add(new Parts(
-                                data.get("Name").toString(),
-                                data.get("Designation").toString(),
-                                drawImgPreview,
-                                drawId)
-                        );
-                    }
-
-
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(MainActivity.this,
-                            e.toString(), Toast.LENGTH_LONG).show();
-                }
-
-                listView = (ListView) findViewById(R.id.part_list);
-                // создаем адаптер
-                pAdapter = new CustomAdapter(MainActivity.this, partsList);
-                listView.setAdapter(pAdapter);
-                pAdapter.notifyDataSetChanged();
-                Toast.makeText(MainActivity.this,
-                        "Image recognized", Toast.LENGTH_LONG).show();
+                process(result);
             }
 
             @Override
@@ -245,6 +195,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         return response.body().string();
+    }
+
+    private void process(float[][] result) {
+
+        partsList = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray(Arrays.asList(result));
+
+        client = new OkHttpClient();
+
+        String url = "http://192.168.1.4:5000/recognise_image";
+
+        listView = (ListView) findViewById(R.id.part_list);
+        // создаем пустой адаптер
+        pAdapter = new CustomAdapter(MainActivity.this, partsList);
+        listView.setAdapter(pAdapter);
+        pAdapter.notifyDataSetChanged();
+        String respond;
+        try {
+            respond = post(url, jsonArray.toString());
+            String jsonData = respond;
+            JSONObject Jobject = new JSONObject(jsonData);
+            JSONArray Jarray = Jobject.getJSONArray("predict_result");
+
+            for (int i = 0; i < Jarray.length(); i++) {
+
+                JSONObject data = new JSONObject(Jarray.getJSONObject(i).toString());
+                JSONObject JoImg = new JSONObject(data.get("draw_img_preview").toString());
+                byte[] decodedBytes = Base64.decode(JoImg.get("$binary").toString(), Base64.DEFAULT);
+                Bitmap drawImgPreview = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                JSONObject drawId = new JSONObject();
+                drawId.put("id", data.get("draw_img_id"));
+                partsList.add(new Parts(
+                        data.get("Name").toString(),
+                        data.get("Designation").toString(),
+                        drawImgPreview,
+                        drawId)
+                );
+            }
+
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(MainActivity.this,
+                    e.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        listView = (ListView) findViewById(R.id.part_list);
+        // создаем адаптер
+        pAdapter = new CustomAdapter(MainActivity.this, partsList);
+        listView.setAdapter(pAdapter);
+        pAdapter.notifyDataSetChanged();
+        Toast.makeText(MainActivity.this,
+                "Image recognized", Toast.LENGTH_LONG).show();
+
     }
 
     private void makeButtonVisible() {

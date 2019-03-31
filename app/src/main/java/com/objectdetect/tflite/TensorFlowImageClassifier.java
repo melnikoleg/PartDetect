@@ -14,23 +14,20 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.List;
+
 
 import static android.content.ContentValues.TAG;
 
 public class TensorFlowImageClassifier implements Classifier {
 
-    private static final int MAX_RESULTS = 3;
     private static final int BATCH_SIZE = 1;
     private static final int PIXEL_SIZE = 3;
-    private static final float THRESHOLD = 0.01f;
 
     private static final int IMAGE_MEAN = 128;
     private static final float IMAGE_STD = 128.0f;
 
     private Interpreter interpreter;
     private int inputSize;
-    private List<String> labelList;
 
     private TensorFlowImageClassifier() {
 
@@ -48,7 +45,8 @@ public class TensorFlowImageClassifier implements Classifier {
     @Override
     public float[][] recognizeImage(Bitmap bitmap) {
         ByteBuffer byteBuffer = convertBitmapToByteBuffer(bitmap);
-        float[][] result = new float[1][1280];
+        float[][] result = new float[1][1792];
+        //float[][] result = new float[1][1280];
 
         long startTime = SystemClock.uptimeMillis();
 
